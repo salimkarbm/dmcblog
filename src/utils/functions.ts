@@ -9,6 +9,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import mongoose, { ObjectId } from 'mongoose';
 import UserRepository from '../repositories/user.repository';
 import appConfig from '../config';
+import { UserDocument } from '../models/user.model';
 
 const userRepo = new UserRepository();
 
@@ -56,6 +57,17 @@ export const generateHash = async (plainPassword: string): Promise<string> => {
         appConfig.BCRYPT.saltRound
     );
     return hash;
+};
+
+export const isPasswordCorrect = async function (
+    candidatePassword: string,
+    userPassword: string
+) {
+    const result = await bcrypt.compare(
+        candidatePassword + appConfig.BCRYPT.pepper,
+        userPassword
+    );
+    return result;
 };
 
 export const isValidMongoId = (id: string): boolean => {
@@ -111,19 +123,22 @@ export const comparePassword = async (
 };
 
 export const generateToken = async (email: string) => {
-    const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET as string;
-    const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET as string;
-    const payload: any = await userRepo.findOne({ email });
-    const data = {
-        id: payload._id,
-        role: payload.role,
-        email: payload.email
-    };
-    const accessToken = jwt.sign(data, accessTokenSecret, {
-        expiresIn: '1800s'
+    const REFRESH_TOKEN_SECRET: string = appConfig.JWT.refresh_token_expires_in;
+    const ACCESS_TOKEN_SECRET: string = appConfig.JWT.access_token_secret;
+    const payload: Partial<UserDocument> | null = await userRepo.findOne({
+        email
     });
-    const refreshToken = jwt.sign(data, refreshTokenSecret, {
-        expiresIn: '1d'
+    const data = {
+        id: payload?._id,
+        role: payload?.role
+    };
+    const accessToken = jwt.sign(data, ACCESS_TOKEN_SECRET, {
+        expiresIn: '1800s',
+        algorithm: 'HS256'
+    });
+    const refreshToken = jwt.sign(data, REFRESH_TOKEN_SECRET, {
+        expiresIn: '1d',
+        algorithm: 'HS256'
     });
     return Promise.resolve({ accessToken, refreshToken });
 };
@@ -140,7 +155,7 @@ export const verifyToken = (email: string, token: string) => {
         // token is still valid
         return true;
     } catch (error) {
-        return false;
+        return error;
     }
 };
 

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import AppError from '../../utils/Errors/appError';
 import AuthService from '../../services/auth.service';
 import STATUS_CODE from '../../shared/constants';
+import SUCCESS_MESSAGE from '../../shared/message/success';
 
 const authService = new AuthService();
 
@@ -11,15 +12,12 @@ export const signUp = async (
     next: NextFunction
 ) => {
     try {
-        const user = await authService.signUp(req, next);
-        if (user) {
-            return res.status(STATUS_CODE.created()).json({
-                status: 'success',
-                message:
-                    'Account successfully created, Check your mail for activation code',
-                user
-            });
-        }
+        const data = await authService.signUp(req, next);
+        return res.status(STATUS_CODE.created()).json({
+            status: 'success',
+            message: SUCCESS_MESSAGE.SIGN_UP,
+            data
+        });
     } catch (err) {
         return next(
             new AppError(
@@ -36,8 +34,12 @@ export const signIn = async (
     next: NextFunction
 ) => {
     try {
-        const result = await authService.signIn(req, next);
-        return result;
+        const data = await authService.signIn(req, next);
+        return res.status(STATUS_CODE.ok()).json({
+            status: 'success',
+            message: SUCCESS_MESSAGE.LOGIN,
+            data
+        });
     } catch (err) {
         return next(
             new AppError(

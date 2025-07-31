@@ -11,7 +11,10 @@ const ERROR_MESSAGE = {
     CONFLICT: 'CONFLICT',
     SERVER_ERROR: 'SERVER ERROR',
     ALREADY_EXISTS: (name: string) => `${name} already exists`,
-    PASSWORD_MISMATCH: 'Passwords do not match'
+    PASSWORD_MISMATCH: 'Passwords do not match',
+    INCORRECT_CREDENTIALS: 'INCORRECT CREDENTIALS',
+    INCORRECT_PASSWORD: 'INCORRECT PASSWORD',
+    INCORRECT_EMAIL: 'INCORRECT EMAIL'
 };
 
 export default ERROR_MESSAGE;

@@ -8,8 +8,13 @@ const configuration = () => ({
     },
 
     JWT: {
-        secret: process.env.JWT_SECRET as string,
-        expiresIn: process.env.JWT_EXPIRY as string
+        secret: process.env?.JWT_SECRET as string,
+        expiresIn: process.env?.JWT_EXPIRY as string,
+        access_token_expires_in: process.env?.JWT_ACCESS_TOKEN_EXPIRY as string,
+        refresh_token_expires_in: process.env
+            .JWT_REFRESH_TOKEN_EXPIRY as string,
+        access_token_secret: process.env?.JWT_ACCESS_TOKEN_SECRET as string,
+        refresh_token_secret: process.env?.JWT_REFRESH_TOKEN_SECRET as string
     },
 
     BCRYPT: {
@@ -17,5 +22,4 @@ const configuration = () => ({
         pepper: process.env.BCRYPT_PASSWORD as string
     }
 });
-
 export default configuration();

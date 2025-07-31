@@ -4,7 +4,7 @@ import UserRepository from '../repositories/user.repository';
 import AppError from '../utils/Errors/appError';
 import STATUS_CODE from '../shared/constants';
 import ERROR_MESSAGE from '../shared/message/error';
-import { generateHash } from '../utils';
+import { generateHash, generateToken, isPasswordCorrect } from '../utils';
 
 const userRepo = new UserRepository();
 
@@ -18,7 +18,7 @@ export default class AuthService {
             return next(
                 new AppError(
                     ERROR_MESSAGE.ALREADY_EXISTS('user'),
-                    STATUS_CODE.badRequest()
+                    STATUS_CODE.conflict()
                 )
             );
         }
@@ -38,7 +38,35 @@ export default class AuthService {
         return user;
     }
 
-    public async signIn(req: any, next: NextFunction): Promise<IUser | void> {
-        return req.user;
+    public async signIn(
+        req: Request,
+        next: NextFunction
+    ): Promise<(IUser & { accessToken: string; refreshToken: string }) | void> {
+        const user = await userRepo.findOne(
+            { email: req.body.email },
+            {},
+            true
+        );
+        if (!user) {
+            return next(
+                new AppError(
+                    ERROR_MESSAGE.INCORRECT_EMAIL,
+                    STATUS_CODE.unprocessableEntity()
+                )
+            );
+        }
+        if (!(await isPasswordCorrect(req.body.password, user.password))) {
+            return next(
+                new AppError(
+                    ERROR_MESSAGE.INCORRECT_PASSWORD,
+                    STATUS_CODE.unprocessableEntity()
+                )
+            );
+        }
+        const { accessToken, refreshToken } = await generateToken(user.email);
+        // eslint-disable-next-line no-unused-vars
+        const { password, ...userWithoutPassword } = user.toObject();
+        const data = { accessToken, refreshToken, ...userWithoutPassword };
+        return data;
     }
 }

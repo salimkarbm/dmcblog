@@ -44,6 +44,8 @@ paths:
                 $ref: '#/components/schemas/User'
         '400':
           description: Invalid input
+        '409':
+          description: User already exists
         '422':
           description: Validation exception
         default:
@@ -78,7 +80,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        '422':
+          description: Validation exception
 
+          
   /auth/forgot-password:
     post:
       tags:
@@ -150,5 +155,4 @@ components:
           type: string
       required:
         - success
-        - error
         - message
