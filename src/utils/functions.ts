@@ -231,3 +231,9 @@ export const multipleUpload = upload.fields([
     { name: 'file4', maxCount: 1 },
     { name: 'file5', maxCount: 1 }
 ]);
+
+export function extractPublicId(url: string): string | null {
+    const regex = /\/([^/]+)\.[a-z]+$/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+}

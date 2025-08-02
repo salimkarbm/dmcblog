@@ -2,17 +2,26 @@ import { Router } from 'express';
 import validate from '../../middlewares/validation/request.validation.middleware';
 import {
     createPost,
+    fetchPostComments,
     fetchPosts,
-    findPost
-    // myPost
+    findPost,
+    findPostComment,
+    postComment,
+    removePost,
+    removePostComment,
+    updatePost,
+    updatePostComment
 } from '../../controllers/post.controller';
 import {
     createPostValidationRules,
     fetchPostsValidationRules,
-    getPostValidationRules
+    getCommentValidationRules,
+    getPostValidationRules,
+    postCommentValidationRules,
+    updateCommentValidationRules,
+    updatePostValidationRules
 } from '../../middlewares/validation/post.validation.middleware';
 import authenticate from '../../middlewares/auth/authentication.middleware';
-// import { getUserValidationRules } from '../../middlewares/validation/user.validation.middleware';
 
 const router = Router();
 
@@ -21,10 +30,31 @@ router
     .post(createPostValidationRules(), validate, authenticate, createPost)
     .get(fetchPostsValidationRules(), validate, fetchPosts);
 
-router.route('/:postId').get(getPostValidationRules(), validate, findPost);
+router
+    .route('/:postId')
+    .get(getPostValidationRules(), validate, findPost)
+    .patch(updatePostValidationRules(), validate, authenticate, updatePost)
+    .delete(getPostValidationRules(), validate, authenticate, removePost);
 
-// router
-//     .route('/:userId/posts')
-//     .get(getUserValidationRules(), validate, authenticate, myPost);
+router
+    .route('/:postId/comments')
+    .post(postCommentValidationRules(), validate, authenticate, postComment)
+    .get(getPostValidationRules(), validate, fetchPostComments);
+
+router
+    .route('/:postId/comments/:commentId')
+    .get(getCommentValidationRules(), validate, findPostComment)
+    .patch(
+        updateCommentValidationRules(),
+        validate,
+        authenticate,
+        updatePostComment
+    )
+    .delete(
+        getCommentValidationRules(),
+        validate,
+        authenticate,
+        removePostComment
+    );
 
 export default router;

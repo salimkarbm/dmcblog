@@ -7,11 +7,12 @@ export interface IReply {
     createdAt: Date;
 }
 export interface IComment {
+    _id?: string | ObjectId;
     user: string | ObjectId;
     comment: string;
     editedAt: Date;
     createdAt: Date;
-    replies: IReply[];
+    replies?: IReply[];
 }
 export interface IPost {
     title: string;
@@ -117,3 +118,8 @@ export const Post: Model<PostDocument> = mongoose.model<PostDocument>(
     'Post',
     postSchema
 );
+
+// export const Comment: Model<CommentDocument> = mongoose.model<CommentDocument>(
+//     'Comment',
+//     commentSchema
+// );
