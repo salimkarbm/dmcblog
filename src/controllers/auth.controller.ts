@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import AppError from '../../utils/Errors/appError';
-import AuthService from '../../services/auth.service';
-import STATUS_CODE from '../../shared/constants';
-import SUCCESS_MESSAGE from '../../shared/message/success';
+import AuthService from '../services/auth.service';
+import STATUS_CODE from '../shared/constants';
+import SUCCESS_MESSAGE from '../shared/message/success';
+import AppError from '../utils/errors/appError';
 
 const authService = new AuthService();
 
@@ -11,21 +11,20 @@ export const signUp = async (
     res: Response,
     next: NextFunction
 ) => {
-    try {
-        const data = await authService.signUp(req, next);
+    const data = await authService.signUp(req, next);
+    if (data) {
         return res.status(STATUS_CODE.created()).json({
             status: 'success',
             message: SUCCESS_MESSAGE.SIGN_UP,
             data
         });
-    } catch (err) {
-        return next(
-            new AppError(
-                `something went wrong! please try gain later.`,
-                STATUS_CODE.internalServerError()
-            )
-        );
     }
+    return next(
+        new AppError(
+            `something went wrong! please try gain later.`,
+            STATUS_CODE.internalServerError()
+        )
+    );
 };
 
 export const signIn = async (
@@ -33,21 +32,20 @@ export const signIn = async (
     res: Response,
     next: NextFunction
 ) => {
-    try {
-        const data = await authService.signIn(req, next);
+    const data = await authService.signIn(req, next);
+    if (data) {
         return res.status(STATUS_CODE.ok()).json({
             status: 'success',
             message: SUCCESS_MESSAGE.LOGIN,
             data
         });
-    } catch (err) {
-        return next(
-            new AppError(
-                `something went wrong! please try gain later.`,
-                STATUS_CODE.internalServerError()
-            )
-        );
     }
+    return next(
+        new AppError(
+            `something went wrong! please try gain later.`,
+            STATUS_CODE.internalServerError()
+        )
+    );
 };
 
 // export const refreshToken = async (

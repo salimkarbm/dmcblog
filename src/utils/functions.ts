@@ -16,22 +16,20 @@ const userRepo = new UserRepository();
 export const cloudinaryUpload = async (url: string) => {
     if (url) {
         cloudinary.config({
-            cloud_name: process.env.CLOUDINARY_NAME,
-            api_key: process.env.CLOUDINARY_API_KEY,
-            api_secret: process.env.CLOUDINARY_API_SECRET
+            cloud_name: appConfig.CLOUDINARY.cloud_name,
+            api_key: appConfig.CLOUDINARY.api_key,
+            api_secret: appConfig.CLOUDINARY.api_secret
         });
-        const upload = await cloudinary.uploader.upload(url, {
-            folder: 'BCA_HealthCare'
-        });
+        const upload = await cloudinary.uploader.upload(url);
         return upload;
     }
 };
 
 export const cloudinaryDestroy = async (publicId: string) => {
     cloudinary.config({
-        cloud_name: process.env.CLOUDINARY_NAME,
-        api_key: process.env.CLOUDINARY_API_KEY,
-        api_secret: process.env.CLOUDINARY_API_SECRET
+        cloud_name: appConfig.CLOUDINARY.cloud_name,
+        api_key: appConfig.CLOUDINARY.api_key,
+        api_secret: appConfig.CLOUDINARY.api_secret
     });
     const upload = await cloudinary.uploader.destroy(publicId);
     return upload;

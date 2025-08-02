@@ -1,7 +1,7 @@
 import { NextFunction, Request } from 'express';
 import { IUser } from '../models/user.model';
 import UserRepository from '../repositories/user.repository';
-import AppError from '../utils/Errors/appError';
+import AppError from '../utils/errors/appError';
 import STATUS_CODE from '../shared/constants';
 import ERROR_MESSAGE from '../shared/message/error';
 import { generateHash, generateToken, isPasswordCorrect } from '../utils';
@@ -13,7 +13,9 @@ export default class AuthService {
         req: Request,
         next: NextFunction
     ): Promise<IUser | void> {
-        const userExists = await userRepo.findOne({ email: req.body.email });
+        const userExists = await userRepo.findOne({
+            email: req.body.email
+        });
         if (userExists) {
             return next(
                 new AppError(

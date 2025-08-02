@@ -16,6 +16,8 @@ tags:
     description: Operations about comments
   - name: User
     description: Operations about user
+  - name: Reply
+    description: Operations about replies
 
 paths:
   /auth/signUp:
@@ -26,7 +28,6 @@ paths:
       description: Create and sign up new user.
       operationId: addUser
       requestBody:
-        description: User object that needs to be added to the database
         required: true
         content:
           application/json:
@@ -53,8 +54,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"        
-        
+                $ref: "#/components/schemas/Error"
+
   /auth/signIn:
     post:
       tags:
@@ -62,7 +63,6 @@ paths:
       summary: Sign in
       description: Login
       requestBody:
-        description: Login user
         required: true
         content:
           application/json:
@@ -83,15 +83,12 @@ paths:
         '422':
           description: Validation exception
 
-          
   /auth/forgot-password:
     post:
       tags:
         - Auth
       summary: Forgot password
-      description: forgot password
       requestBody:
-        description: Forgot password
         required: true
         content:
           application/json:
@@ -102,7 +99,7 @@ paths:
                   type: string
       responses:
         '200':
-          description: Successfully
+          description: Successfully sent reset email
           content:
             application/json:
               schema:
@@ -113,9 +110,7 @@ paths:
       tags:
         - Auth
       summary: Reset password
-      description: Reset password
       requestBody:
-        description: Reset password
         required: true
         content:
           application/json:
@@ -124,7 +119,6 @@ paths:
               properties:
                 token:
                   type: string
-                
       responses:
         '200':
           description: Successfully reset password
@@ -133,10 +127,152 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
 
+  /posts:
+    post:
+      tags:
+        - Post
+      summary: Create post
+      description: Create post and add to database.
+      operationId: addPost
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - title
+                - content
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+                tags:
+                  type: array
+                  items:
+                    type: string
+                  description: List of tags
+            encoding:
+              tags:
+                style: form
+                explode: true
+      responses:
+        '201':
+          description: Post created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation exception
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      tags:
+        - Post
+      summary: Get all post
+      description: Fetch all post from database.
+      operationId: getAllPost
+      parameters:
+        - name: page
+          in: query
+          required: false
+          type: integer
+          minimum: 1
+          default: 1
+          description: Page number
+        - name: limit
+          in: query
+          required: true
+          type: integer
+          minimum: 1
+          default: 10
+          description: Number of post to be returned
+      responses:
+        '200':
+          description: Post fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation exception
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /posts/{postId}:
+    get:
+      tags:
+        - Post
+      summary: Get post
+      description: Fetch post from database.
+      operationId: getPost
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          type: string
+          description: Post id
+      responses:
+        '200':
+          description: Post fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Validation exception
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     User:
       type: object
+      required:
+        - fullName
+        - email
+        - password
       properties:
         fullName:
           type: string
@@ -144,8 +280,31 @@ components:
           type: string
         password:
           type: string
+
+    Post:
+      type: object
+      required:
+        - title
+        - content
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        image:
+          type: string
+          format: binary
+        tags:
+          type: array
+          items:
+            type: string
+          description: List of tags
+
     Error:
       type: object
+      required:
+        - success
+        - message
       properties:
         success:
           type: boolean
@@ -153,6 +312,3 @@ components:
           type: string
         message:
           type: string
-      required:
-        - success
-        - message

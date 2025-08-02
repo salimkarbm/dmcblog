@@ -4,7 +4,8 @@ const configuration = () => ({
         database: {
             uri: process.env.DB_URI || 'mongodb://localhost/ubedu'
         },
-        app_name: process.env.APP_NAME
+        app_name: process.env.APP_NAME,
+        environment: process.env.NODE_ENV
     },
 
     JWT: {
@@ -20,6 +21,12 @@ const configuration = () => ({
     BCRYPT: {
         saltRound: parseInt(process.env.SALT_ROUND as string, 10) || 10,
         pepper: process.env.BCRYPT_PASSWORD as string
+    },
+
+    CLOUDINARY: {
+        cloud_name: process.env.CLOUDINARY_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET
     }
 });
 export default configuration();

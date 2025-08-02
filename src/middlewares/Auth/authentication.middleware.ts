@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { JwtPayload } from 'jsonwebtoken';
 import UserRepository from '../../repositories/user.repository';
-import AppError from '../../utils/Errors/appError';
+import AppError from '../../utils/errors/appError';
 import { verifyJWT } from '../../utils';
 
 const userRepo = new UserRepository();

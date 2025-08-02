@@ -2,9 +2,9 @@ import { Router } from 'express';
 import {
     loginValidationRules,
     signUpValidationRules
-} from '../../middlewares/Validation/auth.validation.middleware';
-import { signUp, signIn } from '../../controllers/Auth/auth.controller';
-import validate from '../../middlewares/Validation/request.validation.middleware';
+} from '../../middlewares/validation/auth.validation.middleware';
+import { signUp, signIn } from '../../controllers/auth.controller';
+import validate from '../../middlewares/validation/request.validation.middleware';
 
 const router = Router();
 

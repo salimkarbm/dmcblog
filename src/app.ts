@@ -3,11 +3,11 @@ import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import dotenv from 'dotenv';
 import express, { Application, Request, Response, NextFunction } from 'express';
-import AppError from './utils/Errors/appError';
-import { errorHandler } from './middlewares/Error/error.middleware';
+import AppError from './utils/errors/appError';
+import { errorHandler } from './middlewares/error/error.middleware';
 import appConfig from './config';
 import dbConnection from './database/database.setup';
-import router from './routes/Auth/auth.route';
+import router from './routes';
 
 dotenv.config({ path: './.env' });
 process.on('uncaughtException', (err) => {
@@ -26,7 +26,7 @@ app.use(cors());
 
 // Body parser middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 const swaggerDocument = YAML.load('./doc.yaml');
 

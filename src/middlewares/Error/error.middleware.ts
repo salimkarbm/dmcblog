@@ -2,7 +2,7 @@ import 'dotenv/config';
 
 import { NextFunction, Request, Response } from 'express';
 
-import AppError from '../../utils/Errors/appError';
+import AppError from '../../utils/errors/appError';
 
 export const sendErrorDev = (err: AppError, res: Response) => {
     const statusCode = err.statusCode || 500;
@@ -33,6 +33,9 @@ export const errorHandler = (
     res: Response,
     next: NextFunction
 ) => {
+    if (res.headersSent) {
+        return next(err); // Prevent sending response twice
+    }
     err.statusCode = err.statusCode || 500;
     err.status = err.status || 'error';
     if (process.env.ENV === 'development') {

@@ -1,8 +1,12 @@
 import { validationResult } from 'express-validator';
 import { NextFunction, Request, Response } from 'express';
 import STATUS_CODE from '../../shared/constants';
+import appConfig from '../../config';
 
 const validate = (req: Request, res: Response, next: NextFunction) => {
+    if (appConfig.APP.environment === 'development') {
+        console.log(req.body, req.params, req.query);
+    }
     const errors = validationResult(req);
     if (errors.isEmpty()) {
         return next();
