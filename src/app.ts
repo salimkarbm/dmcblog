@@ -1,7 +1,7 @@
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import express, { Application, Request, Response, NextFunction } from 'express';
 import AppError from './utils/errors/appError';
 import { errorHandler } from './middlewares/error/error.middleware';
@@ -9,7 +9,6 @@ import appConfig from './config';
 import dbConnection from './database/database.setup';
 import router from './routes';
 
-dotenv.config({ path: './.env' });
 process.on('uncaughtException', (err) => {
     console.log(err.name, err.message);
     console.log('UNCAUGHT EXCEPTION! shutting down...');

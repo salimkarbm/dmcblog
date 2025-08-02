@@ -35,11 +35,13 @@ export const fetchPosts = async (
 ) => {
     try {
         const data = await postService.fetchPosts(req, next);
-        return res.status(STATUS_CODE.ok()).json({
-            status: 'success',
-            message: SUCCESS_MESSAGE.FETCHED('Post'),
-            data
-        });
+        if (data) {
+            return res.status(STATUS_CODE.ok()).json({
+                status: 'success',
+                message: SUCCESS_MESSAGE.FETCHED('Post'),
+                data
+            });
+        }
     } catch (err) {
         return next(
             new AppError(
@@ -55,13 +57,45 @@ export const findPost = async (
     res: Response,
     next: NextFunction
 ) => {
-    const data = await postService.findPost(req, next);
-    if (data) {
-        return res.status(STATUS_CODE.ok()).json({
-            status: 'success',
-            message: SUCCESS_MESSAGE.FETCHED('Post'),
-            data
-        });
+    try {
+        const data = await postService.findPost(req, next);
+        if (data) {
+            return res.status(STATUS_CODE.ok()).json({
+                status: 'success',
+                message: SUCCESS_MESSAGE.FETCHED('Post'),
+                data
+            });
+        }
+    } catch (err) {
+        return next(
+            new AppError(
+                `something went wrong! please try gain later.`,
+                STATUS_CODE.internalServerError()
+            )
+        );
     }
-    return next(new AppError('Post not found', STATUS_CODE.notFound()));
+};
+
+export const myPost = async (
+    req: Record<string, any>,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const data = await postService.myPosts(req, next);
+        if (data) {
+            return res.status(STATUS_CODE.ok()).json({
+                status: 'success',
+                message: SUCCESS_MESSAGE.FETCHED('Post'),
+                data
+            });
+        }
+    } catch (err) {
+        return next(
+            new AppError(
+                `something went wrong! please try gain later.`,
+                STATUS_CODE.internalServerError()
+            )
+        );
+    }
 };

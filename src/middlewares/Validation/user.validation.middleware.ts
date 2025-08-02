@@ -49,7 +49,7 @@ export const getUserValidationRules = () => {
             .trim()
             .notEmpty()
             .withMessage('User ID is required')
-            .isString()
-            .withMessage('User ID must be a string')
+            .isMongoId()
+            .withMessage('User ID must be a valid Mongo ID')
     ];
 };

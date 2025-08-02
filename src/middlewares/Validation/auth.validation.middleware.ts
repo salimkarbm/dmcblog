@@ -44,7 +44,7 @@ export const emailValidationRules = () => {
 
 export const loginValidationRules = () => {
     return [
-        body('email')
+        body('email', 'please enter a valid email')
             .trim()
             .isEmail()
             .withMessage('please enter a valid email'),

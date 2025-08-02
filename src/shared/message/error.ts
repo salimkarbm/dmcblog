@@ -6,7 +6,7 @@ const ERROR_MESSAGE = {
         return `${name} with ID: ${id} not found`;
     },
     BAD_REQUEST: 'BAD REQUEST',
-    UNAUTHORIZED: 'UNAUTHORIZED',
+    UNAUTHORIZED: 'You are not authorized to perform this action',
     FORBIDDEN: 'FORBIDDEN',
     CONFLICT: 'CONFLICT',
     SERVER_ERROR: 'SERVER ERROR',

@@ -4,7 +4,7 @@ import STATUS_CODE from '../../shared/constants';
 import appConfig from '../../config';
 
 const validate = (req: Request, res: Response, next: NextFunction) => {
-    if (appConfig.APP.environment === 'development') {
+    if (appConfig.APP.environment === 'dev') {
         console.log(req.body, req.params, req.query);
     }
     const errors = validationResult(req);

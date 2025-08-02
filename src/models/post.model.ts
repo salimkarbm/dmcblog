@@ -24,6 +24,7 @@ export interface IPost {
     likes: string[] | ObjectId[];
     publishedAt: Date;
     tags: string[];
+    active: boolean;
 }
 
 export type ReplyDocument = IReply & Document;
@@ -105,6 +106,10 @@ export const postSchema = new mongoose.Schema<PostDocument>({
     tags: {
         type: [String],
         default: []
+    },
+    active: {
+        type: Boolean,
+        default: true
     }
 });
 
