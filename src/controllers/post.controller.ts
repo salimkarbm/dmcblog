@@ -35,13 +35,11 @@ export const fetchPosts = async (
 ) => {
     try {
         const data = await postService.fetchPosts(req, next);
-        if (data) {
-            return res.status(STATUS_CODE.ok()).json({
-                status: 'success',
-                message: SUCCESS_MESSAGE.FETCHED('Post'),
-                data
-            });
-        }
+        return res.status(STATUS_CODE.ok()).json({
+            status: 'success',
+            message: SUCCESS_MESSAGE.FETCHED('Post'),
+            data
+        });
     } catch (err) {
         return next(
             new AppError(

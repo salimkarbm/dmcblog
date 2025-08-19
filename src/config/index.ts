@@ -27,6 +27,12 @@ const configuration = () => ({
         cloud_name: process.env.CLOUDINARY_NAME,
         api_key: process.env.CLOUDINARY_API_KEY,
         api_secret: process.env.CLOUDINARY_API_SECRET
+    },
+
+    REDIS: {
+        host: process.env.REDIS_HOST,
+        port: parseInt(process.env.REDIS_PORT as string, 10),
+        TTL: parseInt(process.env.REDIS_TTL as string, 10)
     }
 });
 export default configuration();

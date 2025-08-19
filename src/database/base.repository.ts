@@ -114,7 +114,14 @@ export abstract class BaseRepository<T extends Document> {
     async findWithPagination(
         filterQuery: FilterQuery<T>,
         options: FindType<T> = {}
-    ) {
+    ): Promise<{
+        result: any[]; // You can replace `any` with a safer custom type if needed
+        pagination: {
+            total: number;
+            currentPage: number;
+            pageSize: number;
+        };
+    }> {
         const page = Number(options.page) || 1;
         const limit = Math.min(Number(options.limit) || 20, 200);
         const skip = (page - 1) * limit;

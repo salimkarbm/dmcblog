@@ -60,4 +60,16 @@ process.on('unhandledRejection', (err: any) => {
     });
 });
 
+// Emitted when the process receives a SIGINT signal (e.g., when the user presses Ctrl+C).
+process.on('SIGINT', () => {
+    console.log('Received SIGINT signal. Exiting...');
+    process.exit(0);
+});
+
+// Emitted when the process receives a SIGTERM signal (e.g., when the process is terminated by the operating system).
+process.on('SIGTERM', () => {
+    console.log('Received SIGTERM signal. Exiting...');
+    process.exit(0);
+});
+
 export default server;

@@ -12,9 +12,12 @@ import {
 import ERROR_MESSAGE from '../shared/message/error';
 import UserRepository from '../repositories/user.repository';
 import { UserDocument } from '../models/user.model';
+import RedisCache from './redis-cache.service';
+import appConfig from '../config';
 
 const postRepo = new PostRepository();
 const userRepo = new UserRepository();
+const redisCache = new RedisCache();
 
 export default class PostService {
     public async createPost(
@@ -44,13 +47,26 @@ export default class PostService {
         next: NextFunction
     ): Promise<any | void> {
         const { page, limit } = req.query;
-        const post = await postRepo.findWithPagination(
-            { active: true },
-            {
-                page: Number(page) || 1,
-                limit: Number(limit) || 10
-            }
-        );
+        const cachedPosts = await redisCache.get('posts');
+        if (!cachedPosts) {
+            // eslint-disable-next-line no-unused-vars
+            const posts = await postRepo.findWithPagination(
+                { active: true },
+                {
+                    page: Number(page) || 1,
+                    limit: Number(limit) || 10
+                }
+            );
+
+            await redisCache.setWithExpiry(
+                JSON.stringify(posts),
+                'posts',
+                appConfig.REDIS.TTL
+            );
+
+            return posts;
+        }
+        const post = JSON.parse(cachedPosts);
         return post;
     }
 
@@ -58,6 +74,11 @@ export default class PostService {
         req: Record<string, any>,
         next: NextFunction
     ): Promise<IPost | void> {
+        // Check if data exist in Redis or not
+        const cachedUser = await redisCache.get('post', req.params.postId);
+        if (cachedUser) {
+            return JSON.parse(cachedUser);
+        }
         const post = await postRepo.findOne({ _id: req.params.postId });
         if (!post) {
             return next(
@@ -67,6 +88,8 @@ export default class PostService {
                 )
             );
         }
+
+        await redisCache.set('post', req.params.postId, JSON.stringify(post));
         return post as IPost;
     }
 
