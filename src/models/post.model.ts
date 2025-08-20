@@ -114,12 +114,21 @@ export const postSchema = new mongoose.Schema<PostDocument>({
     }
 });
 
+// Defining the index on the schema directly is the most robust solution.
+
+// single field index
+// postSchema.index({ title: 1 });
+
+// compound field index
+// postSchema.index({ title: 1, createdAt: 1 });
+
+// embedded field index
+// postSchema.index({ 'comments.createdAt': 1, createdAt: 1 });
+
+// embedded document index
+// postSchema.index({ 'comments': 1, createdAt: 1 });
+
 export const Post: Model<PostDocument> = mongoose.model<PostDocument>(
     'Post',
     postSchema
 );
-
-// export const Comment: Model<CommentDocument> = mongoose.model<CommentDocument>(
-//     'Comment',
-//     commentSchema
-// );

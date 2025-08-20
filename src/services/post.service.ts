@@ -69,6 +69,16 @@ export default class PostService {
         const post = JSON.parse(cachedPosts);
         return post;
     }
+    /* querying an Index on a single field */
+    // postRepo.find( {title: "hello world" } )
+    // postRepo.find( { rating: { $gt: 4 } } )
+
+    /* querying an Index on an Embedded field */
+    // postRepo.find( { "comments.createdAt": { $gt: new Date() } } )
+    // postRepo.find( {"comments.createdAt": { $gt: new Date() }, "comments.editedAt": new Date()} )
+
+    /* querying an Index on an Embedded Document(note that order matters i.e the way the fields appears) */
+    // postRepo.find( { comments: { editedAt: new Date(), createdAt: new Date() } } )
 
     public async findPost(
         req: Record<string, any>,
